@@ -139,7 +139,7 @@ const I18N = {
     configSub: "Number of questions, quiz type, language & feedback",
     numQuestions: "Number of questions",
     numQuestionsHint: "How many questions should the quiz have?",
-    quizLang: "Language for quiz",
+    quizLang: "Language for questions",
     quizType: "Quiz type",
     arabicWord: "Arabic",
     answerFeedback: "Answer feedback",
@@ -227,8 +227,6 @@ function applyI18n() {
   });
   document.body.classList.toggle("ui-urdu", state.uiLang === "urdu");
   document.documentElement.lang = state.uiLang === "urdu" ? "ur" : "en";
-  // The quiz meaning language follows the interface language chosen at the start.
-  state.language = state.uiLang;
   updateLanguageLabels();
 }
 
@@ -260,16 +258,6 @@ function initNameScreen() {
   const input = $("#name-input");
   const btn = $("#name-next");
 
-  // UI language toggle - switches the whole interface language.
-  $$("#ui-lang-toggle .lang-btn").forEach((b) => {
-    b.addEventListener("click", () => {
-      $$("#ui-lang-toggle .lang-btn").forEach((x) => x.classList.remove("active"));
-      b.classList.add("active");
-      state.uiLang = b.dataset.uilang;
-      applyI18n();
-    });
-  });
-
   const go = () => {
     const value = input.value.trim();
     if (!value) {
@@ -295,8 +283,6 @@ function buildSetupScreen() {
   const lessonsList = $("#lessons-list");
   lessonsList.innerHTML = "";
   const defaults = ["L1", "L2"];
-  const titles = LESSON_TITLES[state.uiLang];
-  const wordsWord = state.uiLang === "urdu" ? "الفاظ" : "words";
   ["L1", "L2", "L3", "L4", "L5"].forEach((l) => {
     const count = WORDS.filter((w) => w.lesson === l).length;
     const label = document.createElement("label");
@@ -304,18 +290,35 @@ function buildSetupScreen() {
     label.innerHTML = `
       <input type="checkbox" value="${l}" ${defaults.includes(l) ? "checked" : ""} />
       <span class="lesson-name">${l}</span>
-      <span class="lesson-desc">${titles[l]} <em>(${count} ${wordsWord})</em></span>
+      <span class="lesson-desc">
+        <span class="lesson-en">${LESSON_TITLES.english[l]} <em>(${count} words)</em></span>
+        <span class="lesson-ur">${LESSON_TITLES.urdu[l]} <em>(${count} الفاظ)</em></span>
+      </span>
     `;
     lessonsList.appendChild(label);
   });
 }
 
+function selectedLanguage() {
+  const active = $("#lang-toggle .lang-btn.active");
+  return active ? active.dataset.lang : "urdu";
+}
+
 function updateLanguageLabels() {
-  const name = LANGUAGE_NAMES[state.uiLang];
+  const name = LANGUAGE_NAMES[selectedLanguage()];
   $$(".lang-label").forEach((el) => (el.textContent = name));
 }
 
 function initSetupScreen() {
+  // Quiz question language toggle
+  $$("#lang-toggle .lang-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      $$("#lang-toggle .lang-btn").forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+      updateLanguageLabels();
+    });
+  });
+
   $("#start-quiz").addEventListener("click", () => {
     const selected = $$('#lessons-list input[type="checkbox"]:checked').map((c) => c.value);
     if (selected.length === 0) {
@@ -332,6 +335,7 @@ function initSetupScreen() {
     $("#setup-error").textContent = "";
     state.lessons = selected;
     state.direction = $('input[name="direction"]:checked').value;
+    state.language = selectedLanguage();
     state.feedback = $('input[name="feedback"]:checked').value;
     state.quizLength = requested;
     startQuiz();
@@ -390,8 +394,9 @@ function renderQuestion() {
 
   const promptIsArabic = state.direction === "ar2mean";
   const labelEl = $("#question-label");
-  labelEl.textContent = t(promptIsArabic ? "qLabelAr2Mean" : "qLabelMean2Ar");
-  labelEl.className = "question-label" + (state.uiLang === "urdu" ? " urdu" : "");
+  const qKey = promptIsArabic ? "qLabelAr2Mean" : "qLabelMean2Ar";
+  labelEl.textContent = I18N[state.language][qKey];
+  labelEl.className = "question-label" + (state.language === "urdu" ? " urdu" : "");
 
   const promptEl = $("#question-prompt");
   promptEl.textContent = q.promptText;
@@ -529,6 +534,9 @@ function goToSetup() {
   $(`input[name="direction"][value="${state.direction}"]`).checked = true;
   $(`input[name="feedback"][value="${state.feedback}"]`).checked = true;
   $("#num-questions").value = state.quizLength;
+  $$("#lang-toggle .lang-btn").forEach((b) =>
+    b.classList.toggle("active", b.dataset.lang === state.language)
+  );
   updateLanguageLabels();
   showScreen("setup-screen");
 }

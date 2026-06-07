@@ -32,13 +32,6 @@
       <p data-i18n="namePrompt">What is your name?</p>
       <input type="text" id="name-input" placeholder="Enter your name" data-i18n-ph="namePlaceholder" autocomplete="off" />
       <p id="name-error" class="error"></p>
-      <div class="field">
-        <h3 data-i18n="uiLangLabel">Language</h3>
-        <div class="lang-toggle" id="ui-lang-toggle" role="group" aria-label="Language">
-          <button type="button" class="lang-btn active" data-uilang="english">English</button>
-          <button type="button" class="lang-btn" data-uilang="urdu">اردو</button>
-        </div>
-      </div>
       <button id="name-next" class="btn btn-primary" data-i18n="continue">Continue</button>
     </section>
 
@@ -64,6 +57,14 @@
             <h3 data-i18n="numQuestions">Number of questions</h3>
             <p class="hint" data-i18n="numQuestionsHint">How many questions should the quiz have?</p>
             <input type="number" id="num-questions" min="1" max="99" value="5" />
+          </div>
+
+          <div class="field">
+            <h3 data-i18n="quizLang">Language for questions</h3>
+            <div class="lang-toggle" id="lang-toggle" role="group" aria-label="Language for questions">
+              <button type="button" class="lang-btn" data-lang="english">English</button>
+              <button type="button" class="lang-btn active" data-lang="urdu">اردو</button>
+            </div>
           </div>
 
           <div class="field">
