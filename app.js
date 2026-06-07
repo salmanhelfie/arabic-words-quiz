@@ -103,7 +103,7 @@ const state = {
   name: "",
   lessons: [],
   direction: "ar2mean", // "ar2mean" or "mean2ar"
-  language: "english", // "english" or "urdu"
+  language: "urdu", // "english" or "urdu"
   quizLength: QUIZ_LENGTH,
   feedback: "end", // "each" or "end"
   questions: [],
