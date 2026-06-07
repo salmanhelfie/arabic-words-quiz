@@ -91,27 +91,143 @@ const QUIZ_LENGTH = 5;
 const NUM_OPTIONS = 4;
 
 const LESSON_TITLES = {
-  L1: "Demonstrative, relative & negative particles",
-  L2: "Pronouns - object & possessive",
-  L3: "Pronouns - subject",
-  L4: "Interrogatives",
-  L5: "Possession & other particles",
+  english: {
+    L1: "Demonstrative, relative & negative particles",
+    L2: "Pronouns - object & possessive",
+    L3: "Pronouns - subject",
+    L4: "Interrogatives",
+    L5: "Possession & other particles",
+  },
+  urdu: {
+    L1: "اشارہ، موصولہ اور نافیہ الفاظ",
+    L2: "ضمائر - مفعولی و اضافی",
+    L3: "ضمائر - فاعلی",
+    L4: "سوالیہ الفاظ",
+    L5: "ملکیت وغیرہ",
+  },
 };
 
 // ----- App state -----
 const state = {
   name: "",
+  uiLang: "english", // interface language: "english" or "urdu"
   lessons: [],
   direction: "ar2mean", // "ar2mean" or "mean2ar"
-  language: "urdu", // "english" or "urdu"
+  language: "urdu", // quiz meaning language: "english" or "urdu"
   quizLength: QUIZ_LENGTH,
   feedback: "end", // "each" or "end"
   questions: [],
   current: 0,
-  answers: [], // { question, chosen, correct }
+  answers: [], // { chosen, correct } per question index
 };
 
 const LANGUAGE_NAMES = { english: "English", urdu: "اردو" };
+
+// ----- Interface translations -----
+const I18N = {
+  english: {
+    uiLangLabel: "Language",
+    nameWelcome: "Welcome!",
+    namePrompt: "What is your name?",
+    namePlaceholder: "Enter your name",
+    continue: "Continue",
+    nameError: "Please enter your name to continue.",
+    setupGreeting: (name) => `Hi ${name}, set up your quiz`,
+    chooseLessons: "Choose lessons",
+    chooseLessonsHint: "Select one or more lessons to be quizzed on.",
+    configTitle: "Configuration",
+    configSub: "Number of questions, quiz type, language & feedback",
+    numQuestions: "Number of questions",
+    numQuestionsHint: "How many questions should the quiz have?",
+    quizLang: "Language for quiz",
+    quizType: "Quiz type",
+    arabicWord: "Arabic",
+    answerFeedback: "Answer feedback",
+    feedbackEach: "Show on each question",
+    feedbackEnd: "Show summary at the end",
+    back: "Back",
+    startQuiz: "Start quiz",
+    lessonsError: "Please select at least one lesson.",
+    numError: "Please enter a valid number of questions (1 or more).",
+    questionProgress: (i, n) => `Question ${i} of ${n}`,
+    score: (s) => `Score: ${s}`,
+    next: "Next",
+    seeResults: "See results",
+    qLabelAr2Mean: "What does this word mean?",
+    qLabelMean2Ar: "Which Arabic word means this?",
+    resultGreeting: (name) => `Well done, ${name}!`,
+    msgPerfect: "Perfect score! Excellent work.",
+    msgGood: "Great job, keep practising!",
+    msgLow: "Keep going - revise the words and try again.",
+    review: "Review",
+    correctLabel: "Correct:",
+    yourAnswerLabel: "Your answer:",
+    notAnswered: "Not answered",
+    newUser: "New user",
+    tryAgain: "Try again",
+    footer: "Arabic Clinic \u00B7 Practising Qur'anic vocabulary \u00B7 Lessons L1\u2013L5",
+  },
+  urdu: {
+    uiLangLabel: "زبان",
+    nameWelcome: "خوش آمدید!",
+    namePrompt: "آپ کا نام کیا ہے؟",
+    namePlaceholder: "اپنا نام لکھیں",
+    continue: "آگے بڑھیں",
+    nameError: "جاری رکھنے کے لیے براہ کرم اپنا نام درج کریں۔",
+    setupGreeting: (name) => `${name}، اپنا کوئز ترتیب دیں`,
+    chooseLessons: "اسباق منتخب کریں",
+    chooseLessonsHint: "ایک یا زیادہ اسباق منتخب کریں جن پر کوئز ہوگا۔",
+    configTitle: "ترتیبات",
+    configSub: "سوالات کی تعداد، کوئز کی قسم، زبان اور نتیجہ",
+    numQuestions: "سوالات کی تعداد",
+    numQuestionsHint: "کوئز میں کتنے سوال ہونے چاہئیں؟",
+    quizLang: "کوئز کی زبان",
+    quizType: "کوئز کی قسم",
+    arabicWord: "عربی",
+    answerFeedback: "جواب کا نتیجہ",
+    feedbackEach: "ہر سوال پر دکھائیں",
+    feedbackEnd: "آخر میں خلاصہ دکھائیں",
+    back: "واپس",
+    startQuiz: "کوئز شروع کریں",
+    lessonsError: "براہ کرم کم از کم ایک سبق منتخب کریں۔",
+    numError: "براہ کرم سوالات کی درست تعداد درج کریں (1 یا زیادہ)۔",
+    questionProgress: (i, n) => `سوال ${i} / ${n}`,
+    score: (s) => `اسکور: ${s}`,
+    next: "اگلا",
+    seeResults: "نتائج دیکھیں",
+    qLabelAr2Mean: "اس لفظ کا مطلب کیا ہے؟",
+    qLabelMean2Ar: "اس کا مطلب کون سا عربی لفظ ہے؟",
+    resultGreeting: (name) => `شاباش، ${name}!`,
+    msgPerfect: "مکمل اسکور! بہت عمدہ۔",
+    msgGood: "بہت خوب، مشق جاری رکھیں!",
+    msgLow: "کوشش جاری رکھیں - الفاظ دہرائیں اور دوبارہ کوشش کریں۔",
+    review: "جائزہ",
+    correctLabel: "درست:",
+    yourAnswerLabel: "آپ کا جواب:",
+    notAnswered: "جواب نہیں دیا",
+    newUser: "نیا صارف",
+    tryAgain: "دوبارہ کوشش کریں",
+    footer: "عربی کلینک \u00B7 قرآنی الفاظ کی مشق \u00B7 اسباق L1\u2013L5",
+  },
+};
+
+function t(key, ...args) {
+  const entry = I18N[state.uiLang][key];
+  return typeof entry === "function" ? entry(...args) : entry;
+}
+
+function applyI18n() {
+  document.querySelectorAll("[data-i18n]").forEach((el) => {
+    const val = t(el.dataset.i18n);
+    if (val !== undefined) el.textContent = val;
+  });
+  document.querySelectorAll("[data-i18n-ph]").forEach((el) => {
+    const val = t(el.dataset.i18nPh);
+    if (val !== undefined) el.placeholder = val;
+  });
+  document.body.classList.toggle("ui-urdu", state.uiLang === "urdu");
+  document.documentElement.lang = state.uiLang === "urdu" ? "ur" : "en";
+}
 
 // ----- Helpers -----
 const $ = (sel) => document.querySelector(sel);
@@ -140,10 +256,21 @@ function showScreen(id) {
 function initNameScreen() {
   const input = $("#name-input");
   const btn = $("#name-next");
+
+  // UI language toggle - switches the whole interface language.
+  $$("#ui-lang-toggle .lang-btn").forEach((b) => {
+    b.addEventListener("click", () => {
+      $$("#ui-lang-toggle .lang-btn").forEach((x) => x.classList.remove("active"));
+      b.classList.add("active");
+      state.uiLang = b.dataset.uilang;
+      applyI18n();
+    });
+  });
+
   const go = () => {
     const value = input.value.trim();
     if (!value) {
-      $("#name-error").textContent = "Please enter your name to continue.";
+      $("#name-error").textContent = t("nameError");
       input.focus();
       return;
     }
@@ -160,11 +287,13 @@ function initNameScreen() {
 
 // ----- Screen 2: setup -----
 function buildSetupScreen() {
-  $("#setup-greeting").textContent = `Hi ${state.name}, set up your quiz`;
+  $("#setup-greeting").textContent = t("setupGreeting", state.name);
 
   const lessonsList = $("#lessons-list");
   lessonsList.innerHTML = "";
   const defaults = ["L1", "L2"];
+  const titles = LESSON_TITLES[state.uiLang];
+  const wordsWord = state.uiLang === "urdu" ? "الفاظ" : "words";
   ["L1", "L2", "L3", "L4", "L5"].forEach((l) => {
     const count = WORDS.filter((w) => w.lesson === l).length;
     const label = document.createElement("label");
@@ -172,7 +301,7 @@ function buildSetupScreen() {
     label.innerHTML = `
       <input type="checkbox" value="${l}" ${defaults.includes(l) ? "checked" : ""} />
       <span class="lesson-name">${l}</span>
-      <span class="lesson-desc">${LESSON_TITLES[l]} <em>(${count} words)</em></span>
+      <span class="lesson-desc">${titles[l]} <em>(${count} ${wordsWord})</em></span>
     `;
     lessonsList.appendChild(label);
   });
@@ -201,13 +330,13 @@ function initSetupScreen() {
   $("#start-quiz").addEventListener("click", () => {
     const selected = $$('#lessons-list input[type="checkbox"]:checked').map((c) => c.value);
     if (selected.length === 0) {
-      $("#setup-error").textContent = "Please select at least one lesson.";
+      $("#setup-error").textContent = t("lessonsError");
       return;
     }
 
     const requested = parseInt($("#num-questions").value, 10);
     if (!Number.isFinite(requested) || requested < 1) {
-      $("#setup-error").textContent = "Please enter a valid number of questions (1 or more).";
+      $("#setup-error").textContent = t("numError");
       return;
     }
 
@@ -261,30 +390,20 @@ function renderQuestion() {
   const q = state.questions[state.current];
   const total = state.questions.length;
 
-  $("#progress-text").textContent = `Question ${state.current + 1} of ${total}`;
+  $("#progress-text").textContent = t("questionProgress", state.current + 1, total);
   const scoreEl = $("#score-text");
   if (state.feedback === "each") {
     scoreEl.style.display = "";
-    scoreEl.textContent = `Score: ${state.answers.filter((a) => a && a.correct).length}`;
+    scoreEl.textContent = t("score", state.answers.filter((a) => a && a.correct).length);
   } else {
     scoreEl.style.display = "none";
   }
   $("#progress-bar-fill").style.width = `${(state.current / total) * 100}%`;
 
   const promptIsArabic = state.direction === "ar2mean";
-  const labels = {
-    english: {
-      ar2mean: "What does this word mean?",
-      mean2ar: "Which Arabic word means this?",
-    },
-    urdu: {
-      ar2mean: "اس لفظ کا مطلب کیا ہے؟",
-      mean2ar: "اس کا مطلب کون سا عربی لفظ ہے؟",
-    },
-  };
   const labelEl = $("#question-label");
-  labelEl.textContent = labels[state.language][promptIsArabic ? "ar2mean" : "mean2ar"];
-  labelEl.className = "question-label" + (state.language === "urdu" ? " urdu" : "");
+  labelEl.textContent = t(promptIsArabic ? "qLabelAr2Mean" : "qLabelMean2Ar");
+  labelEl.className = "question-label" + (state.uiLang === "urdu" ? " urdu" : "");
 
   const promptEl = $("#question-prompt");
   promptEl.textContent = q.promptText;
@@ -347,7 +466,7 @@ function updateNav() {
   prevBtn.classList.toggle("hidden", state.current === 0);
 
   const nextBtn = $("#next-question");
-  nextBtn.textContent = isLast ? "See results" : "Next";
+  nextBtn.textContent = isLast ? t("seeResults") : t("next");
   nextBtn.classList.toggle("hidden", !answered);
 }
 
@@ -374,18 +493,18 @@ function showResults() {
   const score = state.answers.filter((a) => a && a.correct).length;
   const total = state.questions.length;
 
-  $("#result-greeting").textContent = `Well done, ${state.name}!`;
+  $("#result-greeting").textContent = t("resultGreeting", state.name);
   $("#result-score-num").textContent = `${score}`;
   $("#result-score-total").textContent = `/ ${total}`;
 
   const ringPct = total ? (score / total) * 100 : 0;
   $(".score-circle").style.background = `conic-gradient(var(--primary) ${ringPct}%, #e2e8f0 ${ringPct}%)`;
 
-  let msg;
   const pct = (score / total) * 100;
-  if (pct === 100) msg = "Perfect score! Excellent work.";
-  else if (pct >= 60) msg = "Great job, keep practising!";
-  else msg = "Keep going - revise the words and try again.";
+  let msg;
+  if (pct === 100) msg = t("msgPerfect");
+  else if (pct >= 60) msg = t("msgGood");
+  else msg = t("msgLow");
   $("#result-message").textContent = msg;
 
   const review = $("#review");
@@ -395,7 +514,7 @@ function showResults() {
     const isCorrect = a && a.correct;
     const item = document.createElement("div");
     item.className = "review-item " + (isCorrect ? "ok" : "no");
-    const yourAnswer = a ? a.chosen : "Not answered";
+    const yourAnswer = a ? a.chosen : t("notAnswered");
     item.innerHTML = `
       <div class="review-head">
         <span class="review-num">${i + 1}</span>
@@ -403,8 +522,8 @@ function showResults() {
         <span class="review-mark">${isCorrect ? "✓" : "✗"}</span>
       </div>
       <div class="review-detail">
-        <div>Correct: <strong>${q.answerText}</strong></div>
-        ${isCorrect ? "" : `<div>Your answer: <span class="your-answer">${yourAnswer}</span></div>`}
+        <div>${t("correctLabel")} <strong>${q.answerText}</strong></div>
+        ${isCorrect ? "" : `<div>${t("yourAnswerLabel")} <span class="your-answer">${yourAnswer}</span></div>`}
       </div>
     `;
     review.appendChild(item);
@@ -442,5 +561,6 @@ document.addEventListener("DOMContentLoaded", () => {
   initSetupScreen();
   initQuizScreen();
   initResultScreen();
+  applyI18n();
   showScreen("name-screen");
 });

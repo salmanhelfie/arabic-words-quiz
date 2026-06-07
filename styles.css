@@ -71,6 +71,29 @@ body {
 body.quiz-active .app-header h1,
 body.quiz-active .app-header .subtitle { display: none; }
 body.quiz-active .brand { margin-bottom: 0; }
+
+/* Urdu interface: right-to-left layout and Urdu script font */
+body.ui-urdu .card,
+body.ui-urdu .app-footer { direction: rtl; }
+body.ui-urdu h2,
+body.ui-urdu h3,
+body.ui-urdu p,
+body.ui-urdu .btn,
+body.ui-urdu .config-title,
+body.ui-urdu .config-sub,
+body.ui-urdu .lesson-desc,
+body.ui-urdu .radio-option span,
+body.ui-urdu #progress-text,
+body.ui-urdu #score-text,
+body.ui-urdu .review-detail,
+body.ui-urdu .result-message,
+body.ui-urdu #name-input {
+  font-family: "Noto Nastaliq Urdu", "Poppins", serif;
+  line-height: 2.1;
+}
+body.ui-urdu #name-input { text-align: right; }
+/* Keep the Next button pinned to the visual end regardless of direction */
+.quiz-nav #next-question { margin-left: 0; margin-inline-start: auto; }
 .app-header h1 {
   font-size: 2rem;
   font-weight: 700;

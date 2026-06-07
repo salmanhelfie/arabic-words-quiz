@@ -25,11 +25,18 @@
 
     <!-- Screen 1: Name -->
     <section id="name-screen" class="screen card">
-      <h2>Welcome!</h2>
-      <p>What is your name?</p>
-      <input type="text" id="name-input" placeholder="Enter your name" autocomplete="off" />
+      <div class="field">
+        <h3 data-i18n="uiLangLabel">Language</h3>
+        <div class="lang-toggle" id="ui-lang-toggle" role="group" aria-label="Language">
+          <button type="button" class="lang-btn active" data-uilang="english">English</button>
+          <button type="button" class="lang-btn" data-uilang="urdu">اردو</button>
+        </div>
+      </div>
+      <h2 data-i18n="nameWelcome">Welcome!</h2>
+      <p data-i18n="namePrompt">What is your name?</p>
+      <input type="text" id="name-input" placeholder="Enter your name" data-i18n-ph="namePlaceholder" autocomplete="off" />
       <p id="name-error" class="error"></p>
-      <button id="name-next" class="btn btn-primary">Continue</button>
+      <button id="name-next" class="btn btn-primary" data-i18n="continue">Continue</button>
     </section>
 
     <!-- Screen 2: Setup -->
@@ -37,27 +44,27 @@
       <h2 id="setup-greeting">Set up your quiz</h2>
 
       <div class="field">
-        <h3>Choose lessons</h3>
-        <p class="hint">Select one or more lessons to be quizzed on.</p>
+        <h3 data-i18n="chooseLessons">Choose lessons</h3>
+        <p class="hint" data-i18n="chooseLessonsHint">Select one or more lessons to be quizzed on.</p>
         <div id="lessons-list" class="lessons-list"></div>
       </div>
 
       <details class="config" id="config">
         <summary>
-          <span class="config-title">Configuration</span>
-          <span class="config-sub">Number of questions, quiz type, language &amp; feedback</span>
+          <span class="config-title" data-i18n="configTitle">Configuration</span>
+          <span class="config-sub" data-i18n="configSub">Number of questions, quiz type, language &amp; feedback</span>
           <span class="config-chevron" aria-hidden="true">&#9656;</span>
         </summary>
 
         <div class="config-body">
           <div class="field">
-            <h3>Number of questions</h3>
-            <p class="hint">How many questions should the quiz have?</p>
+            <h3 data-i18n="numQuestions">Number of questions</h3>
+            <p class="hint" data-i18n="numQuestionsHint">How many questions should the quiz have?</p>
             <input type="number" id="num-questions" min="1" max="99" value="5" />
           </div>
 
           <div class="field">
-            <h3>Language for quiz</h3>
+            <h3 data-i18n="quizLang">Language for quiz</h3>
             <div class="lang-toggle" id="lang-toggle" role="group" aria-label="Language for quiz">
               <button type="button" class="lang-btn" data-lang="english">English</button>
               <button type="button" class="lang-btn active" data-lang="urdu">اردو</button>
@@ -65,29 +72,29 @@
           </div>
 
           <div class="field">
-            <h3>Quiz type</h3>
+            <h3 data-i18n="quizType">Quiz type</h3>
             <div class="radio-group">
               <label class="radio-option">
                 <input type="radio" name="direction" value="ar2mean" checked />
-                <span>Arabic &rarr; <span class="lang-label">اردو</span></span>
+                <span><span data-i18n="arabicWord">Arabic</span> &rarr; <span class="lang-label">اردو</span></span>
               </label>
               <label class="radio-option">
                 <input type="radio" name="direction" value="mean2ar" />
-                <span><span class="lang-label">اردو</span> &rarr; Arabic</span>
+                <span><span class="lang-label">اردو</span> &rarr; <span data-i18n="arabicWord">Arabic</span></span>
               </label>
             </div>
           </div>
 
           <div class="field">
-            <h3>Answer feedback</h3>
+            <h3 data-i18n="answerFeedback">Answer feedback</h3>
             <div class="radio-group">
               <label class="radio-option">
                 <input type="radio" name="feedback" value="each" />
-                <span>Show on each question</span>
+                <span data-i18n="feedbackEach">Show on each question</span>
               </label>
               <label class="radio-option">
                 <input type="radio" name="feedback" value="end" checked />
-                <span>Show summary at the end</span>
+                <span data-i18n="feedbackEnd">Show summary at the end</span>
               </label>
             </div>
           </div>
@@ -96,8 +103,8 @@
 
       <p id="setup-error" class="error"></p>
       <div class="btn-row">
-        <button id="setup-back" class="btn btn-ghost">Back</button>
-        <button id="start-quiz" class="btn btn-primary">Start quiz</button>
+        <button id="setup-back" class="btn btn-ghost" data-i18n="back">Back</button>
+        <button id="start-quiz" class="btn btn-primary" data-i18n="startQuiz">Start quiz</button>
       </div>
     </section>
 
@@ -115,7 +122,7 @@
       <div id="options" class="options"></div>
 
       <div class="quiz-nav">
-        <button id="prev-question" class="btn btn-ghost hidden">Back</button>
+        <button id="prev-question" class="btn btn-ghost hidden" data-i18n="back">Back</button>
         <button id="next-question" class="btn btn-primary hidden">Next</button>
       </div>
     </section>
@@ -131,17 +138,17 @@
       </div>
       <p id="result-message" class="result-message"></p>
 
-      <h3>Review</h3>
+      <h3 data-i18n="review">Review</h3>
       <div id="review" class="review"></div>
 
       <div class="btn-row">
-        <button id="new-user" class="btn btn-ghost">New user</button>
-        <button id="try-again" class="btn btn-primary">Try again</button>
+        <button id="new-user" class="btn btn-ghost" data-i18n="newUser">New user</button>
+        <button id="try-again" class="btn btn-primary" data-i18n="tryAgain">Try again</button>
       </div>
     </section>
 
     <footer class="app-footer">
-      <p>Arabic Clinic &middot; Practising Qur'anic vocabulary &middot; Lessons L1&ndash;L5</p>
+      <p data-i18n="footer">Arabic Clinic &middot; Practising Qur'anic vocabulary &middot; Lessons L1&ndash;L5</p>
     </footer>
   </main>
 
