@@ -28,6 +28,10 @@
 
     <!-- Screen 1: Name -->
     <section id="name-screen" class="screen card">
+      <h2 data-i18n="nameWelcome">Welcome!</h2>
+      <p data-i18n="namePrompt">What is your name?</p>
+      <input type="text" id="name-input" placeholder="Enter your name" data-i18n-ph="namePlaceholder" autocomplete="off" />
+      <p id="name-error" class="error"></p>
       <div class="field">
         <h3 data-i18n="uiLangLabel">Language</h3>
         <div class="lang-toggle" id="ui-lang-toggle" role="group" aria-label="Language">
@@ -35,10 +39,6 @@
           <button type="button" class="lang-btn" data-uilang="urdu">اردو</button>
         </div>
       </div>
-      <h2 data-i18n="nameWelcome">Welcome!</h2>
-      <p data-i18n="namePrompt">What is your name?</p>
-      <input type="text" id="name-input" placeholder="Enter your name" data-i18n-ph="namePlaceholder" autocomplete="off" />
-      <p id="name-error" class="error"></p>
       <button id="name-next" class="btn btn-primary" data-i18n="continue">Continue</button>
     </section>
 
