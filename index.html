@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Arabic Words Quiz</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Noto+Nastaliq+Urdu:wght@400;600&family=Poppins:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app">
+    <header class="app-header">
+      <h1>Arabic Words Quiz</h1>
+      <p class="subtitle">Learn the most common words of the Qur'an</p>
+    </header>
+
+    <!-- Screen 1: Name -->
+    <section id="name-screen" class="screen card">
+      <h2>Welcome!</h2>
+      <p>What is your name?</p>
+      <input type="text" id="name-input" placeholder="Enter your name" autocomplete="off" />
+      <p id="name-error" class="error"></p>
+      <button id="name-next" class="btn btn-primary">Continue</button>
+    </section>
+
+    <!-- Screen 2: Setup -->
+    <section id="setup-screen" class="screen card">
+      <h2 id="setup-greeting">Set up your quiz</h2>
+
+      <div class="field">
+        <h3>1. Choose lessons</h3>
+        <p class="hint">Select one or more. Your quiz will have 5 random questions.</p>
+        <div id="lessons-list" class="lessons-list"></div>
+      </div>
+
+      <div class="field">
+        <h3>2. Quiz type</h3>
+        <div class="radio-group">
+          <label class="radio-option">
+            <input type="radio" name="direction" value="ar2mean" checked />
+            <span>Arabic &rarr; meaning</span>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="direction" value="mean2ar" />
+            <span>Meaning &rarr; Arabic</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="field">
+        <h3>3. Meaning language</h3>
+        <div class="radio-group">
+          <label class="radio-option">
+            <input type="radio" name="language" value="english" checked />
+            <span>English</span>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="language" value="urdu" />
+            <span>اردو</span>
+          </label>
+        </div>
+      </div>
+
+      <p id="setup-error" class="error"></p>
+      <div class="btn-row">
+        <button id="setup-back" class="btn btn-ghost">Back</button>
+        <button id="start-quiz" class="btn btn-primary">Start quiz</button>
+      </div>
+    </section>
+
+    <!-- Screen 3: Quiz -->
+    <section id="quiz-screen" class="screen card">
+      <div class="quiz-top">
+        <span id="progress-text">Question 1 of 5</span>
+        <span id="score-text">Score: 0</span>
+      </div>
+      <div class="progress-bar"><div id="progress-bar-fill" class="progress-bar-fill"></div></div>
+
+      <p id="question-label" class="question-label">What does this word mean?</p>
+      <div id="question-prompt" class="question-prompt arabic">&nbsp;</div>
+
+      <div id="options" class="options"></div>
+
+      <button id="next-question" class="btn btn-primary hidden">Next</button>
+    </section>
+
+    <!-- Screen 4: Result -->
+    <section id="result-screen" class="screen card">
+      <h2 id="result-greeting">Well done!</h2>
+      <div id="result-score" class="result-score">0 / 5</div>
+      <p id="result-message" class="result-message"></p>
+
+      <h3>Review</h3>
+      <div id="review" class="review"></div>
+
+      <div class="btn-row">
+        <button id="new-user" class="btn btn-ghost">New user</button>
+        <button id="try-again" class="btn btn-primary">Try again</button>
+      </div>
+    </section>
+
+    <footer class="app-footer">
+      <p>Made for practising Qur'anic vocabulary &middot; Lessons L1&ndash;L5</p>
+    </footer>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
