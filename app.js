@@ -227,6 +227,9 @@ function applyI18n() {
   });
   document.body.classList.toggle("ui-urdu", state.uiLang === "urdu");
   document.documentElement.lang = state.uiLang === "urdu" ? "ur" : "en";
+  // The quiz meaning language follows the interface language chosen at the start.
+  state.language = state.uiLang;
+  updateLanguageLabels();
 }
 
 // ----- Helpers -----
@@ -307,26 +310,12 @@ function buildSetupScreen() {
   });
 }
 
-function selectedLanguage() {
-  const active = $("#lang-toggle .lang-btn.active");
-  return active ? active.dataset.lang : "english";
-}
-
 function updateLanguageLabels() {
-  const name = LANGUAGE_NAMES[selectedLanguage()];
+  const name = LANGUAGE_NAMES[state.uiLang];
   $$(".lang-label").forEach((el) => (el.textContent = name));
 }
 
 function initSetupScreen() {
-  // Language toggle button
-  $$("#lang-toggle .lang-btn").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      $$("#lang-toggle .lang-btn").forEach((b) => b.classList.remove("active"));
-      btn.classList.add("active");
-      updateLanguageLabels();
-    });
-  });
-
   $("#start-quiz").addEventListener("click", () => {
     const selected = $$('#lessons-list input[type="checkbox"]:checked').map((c) => c.value);
     if (selected.length === 0) {
@@ -343,7 +332,6 @@ function initSetupScreen() {
     $("#setup-error").textContent = "";
     state.lessons = selected;
     state.direction = $('input[name="direction"]:checked').value;
-    state.language = selectedLanguage();
     state.feedback = $('input[name="feedback"]:checked').value;
     state.quizLength = requested;
     startQuiz();
@@ -541,9 +529,6 @@ function goToSetup() {
   $(`input[name="direction"][value="${state.direction}"]`).checked = true;
   $(`input[name="feedback"][value="${state.feedback}"]`).checked = true;
   $("#num-questions").value = state.quizLength;
-  $$("#lang-toggle .lang-btn").forEach((b) =>
-    b.classList.toggle("active", b.dataset.lang === state.language)
-  );
   updateLanguageLabels();
   showScreen("setup-screen");
 }
