@@ -532,27 +532,33 @@ function showResults() {
   showScreen("result-screen");
 }
 
-function initResultScreen() {
-  $("#try-again").addEventListener("click", () => {
-    buildSetupScreen();
-    // restore previous lesson selections + options
-    $$('#lessons-list input[type="checkbox"]').forEach((c) => {
-      c.checked = state.lessons.includes(c.value);
-    });
-    $(`input[name="direction"][value="${state.direction}"]`).checked = true;
-    $(`input[name="feedback"][value="${state.feedback}"]`).checked = true;
-    $("#num-questions").value = state.quizLength;
-    $$("#lang-toggle .lang-btn").forEach((b) =>
-      b.classList.toggle("active", b.dataset.lang === state.language)
-    );
-    updateLanguageLabels();
-    showScreen("setup-screen");
+// Rebuild the setup screen, restoring the user's previous configuration.
+function goToSetup() {
+  buildSetupScreen();
+  $$('#lessons-list input[type="checkbox"]').forEach((c) => {
+    c.checked = state.lessons.includes(c.value);
   });
+  $(`input[name="direction"][value="${state.direction}"]`).checked = true;
+  $(`input[name="feedback"][value="${state.feedback}"]`).checked = true;
+  $("#num-questions").value = state.quizLength;
+  $$("#lang-toggle .lang-btn").forEach((b) =>
+    b.classList.toggle("active", b.dataset.lang === state.language)
+  );
+  updateLanguageLabels();
+  showScreen("setup-screen");
+}
+
+function initResultScreen() {
+  $("#try-again").addEventListener("click", goToSetup);
 
   $("#new-user").addEventListener("click", () => {
     $("#name-input").value = "";
     showScreen("name-screen");
   });
+}
+
+function initRestartButton() {
+  $("#restart-btn").addEventListener("click", goToSetup);
 }
 
 // ----- Init -----
@@ -561,6 +567,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initSetupScreen();
   initQuizScreen();
   initResultScreen();
+  initRestartButton();
   applyI18n();
   showScreen("name-screen");
 });

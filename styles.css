@@ -72,6 +72,29 @@ body.quiz-active .app-header h1,
 body.quiz-active .app-header .subtitle { display: none; }
 body.quiz-active .brand { margin-bottom: 0; }
 
+/* Restart / reconfigure button - only visible during the quiz */
+.restart-btn {
+  display: none;
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.4rem;
+  line-height: 1;
+  color: #0f172a;
+  background: linear-gradient(135deg, #5eead4, #fcd34d);
+  box-shadow: 0 6px 16px rgba(2, 6, 23, 0.3);
+  z-index: 50;
+  transition: transform 0.15s, box-shadow 0.2s;
+}
+body.quiz-active .restart-btn { display: grid; place-items: center; }
+.restart-btn:hover { transform: rotate(-45deg); box-shadow: 0 8px 20px rgba(2, 6, 23, 0.4); }
+.restart-btn:active { transform: rotate(-180deg); }
+
 /* Urdu interface: right-to-left layout and Urdu script font */
 body.ui-urdu .card,
 body.ui-urdu .app-footer { direction: rtl; }
