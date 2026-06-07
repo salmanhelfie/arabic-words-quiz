@@ -104,10 +104,14 @@ const state = {
   lessons: [],
   direction: "ar2mean", // "ar2mean" or "mean2ar"
   language: "english", // "english" or "urdu"
+  quizLength: QUIZ_LENGTH,
+  feedback: "end", // "each" or "end"
   questions: [],
   current: 0,
   answers: [], // { question, chosen, correct }
 };
+
+const LANGUAGE_NAMES = { english: "English", urdu: "اردو" };
 
 // ----- Helpers -----
 const $ = (sel) => document.querySelector(sel);
@@ -159,12 +163,13 @@ function buildSetupScreen() {
 
   const lessonsList = $("#lessons-list");
   lessonsList.innerHTML = "";
+  const defaults = ["L1", "L2"];
   ["L1", "L2", "L3", "L4", "L5"].forEach((l) => {
     const count = WORDS.filter((w) => w.lesson === l).length;
     const label = document.createElement("label");
     label.className = "lesson-option";
     label.innerHTML = `
-      <input type="checkbox" value="${l}" />
+      <input type="checkbox" value="${l}" ${defaults.includes(l) ? "checked" : ""} />
       <span class="lesson-name">${l}</span>
       <span class="lesson-desc">${LESSON_TITLES[l]} <em>(${count} words)</em></span>
     `;
@@ -172,17 +177,45 @@ function buildSetupScreen() {
   });
 }
 
+function selectedLanguage() {
+  const active = $("#lang-toggle .lang-btn.active");
+  return active ? active.dataset.lang : "english";
+}
+
+function updateLanguageLabels() {
+  const name = LANGUAGE_NAMES[selectedLanguage()];
+  $$(".lang-label").forEach((el) => (el.textContent = name));
+}
+
 function initSetupScreen() {
+  // Language toggle button
+  $$("#lang-toggle .lang-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      $$("#lang-toggle .lang-btn").forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+      updateLanguageLabels();
+    });
+  });
+
   $("#start-quiz").addEventListener("click", () => {
     const selected = $$('#lessons-list input[type="checkbox"]:checked').map((c) => c.value);
     if (selected.length === 0) {
       $("#setup-error").textContent = "Please select at least one lesson.";
       return;
     }
+
+    const requested = parseInt($("#num-questions").value, 10);
+    if (!Number.isFinite(requested) || requested < 1) {
+      $("#setup-error").textContent = "Please enter a valid number of questions (1 or more).";
+      return;
+    }
+
     $("#setup-error").textContent = "";
     state.lessons = selected;
     state.direction = $('input[name="direction"]:checked').value;
-    state.language = $('input[name="language"]:checked').value;
+    state.language = selectedLanguage();
+    state.feedback = $('input[name="feedback"]:checked').value;
+    state.quizLength = requested;
     startQuiz();
   });
 
@@ -192,7 +225,7 @@ function initSetupScreen() {
 // ----- Build questions -----
 function startQuiz() {
   const pool = WORDS.filter((w) => state.lessons.includes(w.lesson));
-  const picked = shuffle(pool).slice(0, Math.min(QUIZ_LENGTH, pool.length));
+  const picked = shuffle(pool).slice(0, Math.min(state.quizLength, pool.length));
 
   state.questions = picked.map((word) => {
     // Distractors come from the whole pool, must differ from the correct answer text.
@@ -228,13 +261,19 @@ function renderQuestion() {
   const total = state.questions.length;
 
   $("#progress-text").textContent = `Question ${state.current + 1} of ${total}`;
-  $("#score-text").textContent = `Score: ${state.answers.filter((a) => a.correct).length}`;
+  const scoreEl = $("#score-text");
+  if (state.feedback === "each") {
+    scoreEl.style.display = "";
+    scoreEl.textContent = `Score: ${state.answers.filter((a) => a.correct).length}`;
+  } else {
+    scoreEl.style.display = "none";
+  }
   $("#progress-bar-fill").style.width = `${(state.current / total) * 100}%`;
 
   const promptIsArabic = state.direction === "ar2mean";
   $("#question-label").textContent = promptIsArabic
-    ? "What does this word mean?"
-    : `Which Arabic word means this (${state.language === "urdu" ? "Urdu" : "English"})?`;
+    ? `What does this word mean (${LANGUAGE_NAMES[state.language]})?`
+    : `Which Arabic word means this (${LANGUAGE_NAMES[state.language]})?`;
 
   const promptEl = $("#question-prompt");
   promptEl.textContent = q.promptText;
@@ -258,13 +297,24 @@ function chooseAnswer(chosen, btnEl) {
 
   $$("#options .option").forEach((b) => {
     b.disabled = true;
-    if (b.textContent === q.answerText) b.classList.add("correct");
-    else if (b === btnEl) b.classList.add("wrong");
   });
 
   state.answers.push({ question: q, chosen, correct });
-  $("#score-text").textContent = `Score: ${state.answers.filter((a) => a.correct).length}`;
 
+  if (state.feedback === "each") {
+    // Reveal correct / wrong immediately.
+    $$("#options .option").forEach((b) => {
+      if (b.textContent === q.answerText) b.classList.add("correct");
+      else if (b === btnEl) b.classList.add("wrong");
+    });
+    $("#score-text").textContent = `Score: ${state.answers.filter((a) => a.correct).length}`;
+  } else {
+    // Summary at the end: just mark the chosen option, no reveal.
+    btnEl.classList.add("selected");
+  }
+
+  const isLast = state.current === state.questions.length - 1;
+  $("#next-question").textContent = isLast ? "See results" : "Next";
   $("#next-question").classList.remove("hidden");
 }
 
@@ -286,7 +336,11 @@ function showResults() {
   const total = state.questions.length;
 
   $("#result-greeting").textContent = `Well done, ${state.name}!`;
-  $("#result-score").textContent = `${score} / ${total}`;
+  $("#result-score-num").textContent = `${score}`;
+  $("#result-score-total").textContent = `/ ${total}`;
+
+  const ringPct = total ? (score / total) * 100 : 0;
+  $(".score-circle").style.background = `conic-gradient(var(--primary) ${ringPct}%, #e2e8f0 ${ringPct}%)`;
 
   let msg;
   const pct = (score / total) * 100;
@@ -325,7 +379,12 @@ function initResultScreen() {
       c.checked = state.lessons.includes(c.value);
     });
     $(`input[name="direction"][value="${state.direction}"]`).checked = true;
-    $(`input[name="language"][value="${state.language}"]`).checked = true;
+    $(`input[name="feedback"][value="${state.feedback}"]`).checked = true;
+    $("#num-questions").value = state.quizLength;
+    $$("#lang-toggle .lang-btn").forEach((b) =>
+      b.classList.toggle("active", b.dataset.lang === state.language)
+    );
+    updateLanguageLabels();
     showScreen("setup-screen");
   });
 

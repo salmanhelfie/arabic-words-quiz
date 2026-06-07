@@ -5,11 +5,14 @@ A simple, static quiz website for practising the most common words of the Qur'an
 ## Features
 
 - Asks for the user's name
-- Choose one or more lessons (L1-L5)
-- 5 random multiple-choice questions per quiz
-- Quiz direction: **Arabic to meaning** or **meaning to Arabic**
-- Meaning language toggle: **English** or **Urdu**
-- Instant feedback, running score, and an end-of-quiz review
+- Choose one or more lessons (L1-L5) - L1 & L2 selected by default
+- Configurable options (under a "Configuration" section):
+  - **Number of questions** (default 5)
+  - **Language toggle**: English or Urdu
+  - **Quiz type**: Arabic to language, or language to Arabic
+  - **Answer feedback**: reveal on each question, or show a summary at the end (default)
+- Random multiple-choice questions drawn from the selected lessons
+- End-of-quiz score shown in a circular gauge, plus a per-question review
 
 ## Lessons
 

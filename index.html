@@ -33,38 +33,62 @@
       <h2 id="setup-greeting">Set up your quiz</h2>
 
       <div class="field">
-        <h3>1. Choose lessons</h3>
-        <p class="hint">Select one or more. Your quiz will have 5 random questions.</p>
+        <h3>Choose lessons</h3>
+        <p class="hint">Select one or more lessons to be quizzed on.</p>
         <div id="lessons-list" class="lessons-list"></div>
       </div>
 
-      <div class="field">
-        <h3>2. Quiz type</h3>
-        <div class="radio-group">
-          <label class="radio-option">
-            <input type="radio" name="direction" value="ar2mean" checked />
-            <span>Arabic &rarr; meaning</span>
-          </label>
-          <label class="radio-option">
-            <input type="radio" name="direction" value="mean2ar" />
-            <span>Meaning &rarr; Arabic</span>
-          </label>
-        </div>
-      </div>
+      <details class="config" id="config">
+        <summary>
+          <span class="config-title">Configuration</span>
+          <span class="config-sub">Number of questions, quiz type, language &amp; feedback</span>
+          <span class="config-chevron" aria-hidden="true">&#9656;</span>
+        </summary>
 
-      <div class="field">
-        <h3>3. Meaning language</h3>
-        <div class="radio-group">
-          <label class="radio-option">
-            <input type="radio" name="language" value="english" checked />
-            <span>English</span>
-          </label>
-          <label class="radio-option">
-            <input type="radio" name="language" value="urdu" />
-            <span>اردو</span>
-          </label>
+        <div class="config-body">
+          <div class="field">
+            <h3>Number of questions</h3>
+            <p class="hint">How many questions should the quiz have?</p>
+            <input type="number" id="num-questions" min="1" max="99" value="5" />
+          </div>
+
+          <div class="field">
+            <h3>Language</h3>
+            <div class="lang-toggle" id="lang-toggle" role="group" aria-label="Language">
+              <button type="button" class="lang-btn active" data-lang="english">English</button>
+              <button type="button" class="lang-btn" data-lang="urdu">اردو</button>
+            </div>
+          </div>
+
+          <div class="field">
+            <h3>Quiz type</h3>
+            <div class="radio-group">
+              <label class="radio-option">
+                <input type="radio" name="direction" value="ar2mean" checked />
+                <span>Arabic &rarr; <span class="lang-label">English</span></span>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="direction" value="mean2ar" />
+                <span><span class="lang-label">English</span> &rarr; Arabic</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="field">
+            <h3>Answer feedback</h3>
+            <div class="radio-group">
+              <label class="radio-option">
+                <input type="radio" name="feedback" value="each" />
+                <span>Show on each question</span>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="feedback" value="end" checked />
+                <span>Show summary at the end</span>
+              </label>
+            </div>
+          </div>
         </div>
-      </div>
+      </details>
 
       <p id="setup-error" class="error"></p>
       <div class="btn-row">
@@ -92,7 +116,12 @@
     <!-- Screen 4: Result -->
     <section id="result-screen" class="screen card">
       <h2 id="result-greeting">Well done!</h2>
-      <div id="result-score" class="result-score">0 / 5</div>
+      <div class="score-circle">
+        <div class="score-circle-inner">
+          <span id="result-score-num" class="score-num">0</span>
+          <span id="result-score-total" class="score-total">/ 5</span>
+        </div>
+      </div>
       <p id="result-message" class="result-message"></p>
 
       <h3>Review</h3>
