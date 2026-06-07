@@ -251,7 +251,7 @@ function startQuiz() {
   });
 
   state.current = 0;
-  state.answers = [];
+  state.answers = new Array(state.questions.length).fill(null);
   renderQuestion();
   showScreen("quiz-screen");
 }
@@ -265,7 +265,7 @@ function renderQuestion() {
   const scoreEl = $("#score-text");
   if (state.feedback === "each") {
     scoreEl.style.display = "";
-    scoreEl.textContent = `Score: ${state.answers.filter((a) => a.correct).length}`;
+    scoreEl.textContent = `Score: ${state.answers.filter((a) => a && a.correct).length}`;
   } else {
     scoreEl.style.display = "none";
   }
@@ -290,6 +290,10 @@ function renderQuestion() {
   promptEl.textContent = q.promptText;
   promptEl.className = "question-prompt " + (promptIsArabic ? "arabic" : state.language === "urdu" ? "urdu" : "english");
 
+  const existing = state.answers[state.current];
+  // In "each" mode an answered question is locked (feedback already shown).
+  const locked = state.feedback === "each" && existing !== null;
+
   const optionsEl = $("#options");
   optionsEl.innerHTML = "";
   const optionIsArabic = !promptIsArabic; // answers are arabic when prompt is meaning
@@ -297,53 +301,77 @@ function renderQuestion() {
     const btn = document.createElement("button");
     btn.className = "option " + (optionIsArabic ? "arabic" : state.language === "urdu" ? "urdu" : "english");
     btn.textContent = opt;
-    btn.addEventListener("click", () => chooseAnswer(opt, btn));
+
+    if (locked) {
+      btn.disabled = true;
+      if (opt === q.answerText) btn.classList.add("correct");
+      else if (opt === existing.chosen) btn.classList.add("wrong");
+    } else if (existing && opt === existing.chosen) {
+      btn.classList.add("selected");
+    }
+
+    if (!locked) btn.addEventListener("click", () => chooseAnswer(opt, btn));
     optionsEl.appendChild(btn);
   });
+
+  updateNav();
 }
 
 function chooseAnswer(chosen, btnEl) {
   const q = state.questions[state.current];
   const correct = chosen === q.answerText;
-
-  $$("#options .option").forEach((b) => {
-    b.disabled = true;
-  });
-
-  state.answers.push({ question: q, chosen, correct });
+  state.answers[state.current] = { chosen, correct };
 
   if (state.feedback === "each") {
-    // Reveal correct / wrong immediately.
+    // Reveal correct / wrong immediately and lock the question.
     $$("#options .option").forEach((b) => {
+      b.disabled = true;
       if (b.textContent === q.answerText) b.classList.add("correct");
       else if (b === btnEl) b.classList.add("wrong");
     });
-    $("#score-text").textContent = `Score: ${state.answers.filter((a) => a.correct).length}`;
+    $("#score-text").textContent = `Score: ${state.answers.filter((a) => a && a.correct).length}`;
   } else {
-    // Summary at the end: just mark the chosen option, no reveal.
+    // Summary at the end: highlight the chosen option; allow changing it.
+    $$("#options .option").forEach((b) => b.classList.remove("selected"));
     btnEl.classList.add("selected");
   }
 
+  updateNav();
+}
+
+function updateNav() {
   const isLast = state.current === state.questions.length - 1;
-  $("#next-question").textContent = isLast ? "See results" : "Next";
-  $("#next-question").classList.remove("hidden");
+  const answered = state.answers[state.current] !== null;
+
+  const prevBtn = $("#prev-question");
+  prevBtn.classList.toggle("hidden", state.current === 0);
+
+  const nextBtn = $("#next-question");
+  nextBtn.textContent = isLast ? "See results" : "Next";
+  nextBtn.classList.toggle("hidden", !answered);
 }
 
 function initQuizScreen() {
   $("#next-question").addEventListener("click", () => {
-    $("#next-question").classList.add("hidden");
-    state.current++;
-    if (state.current < state.questions.length) {
+    if (state.current < state.questions.length - 1) {
+      state.current++;
       renderQuestion();
     } else {
       showResults();
+    }
+  });
+
+  $("#prev-question").addEventListener("click", () => {
+    if (state.current > 0) {
+      state.current--;
+      renderQuestion();
     }
   });
 }
 
 // ----- Screen 4: results -----
 function showResults() {
-  const score = state.answers.filter((a) => a.correct).length;
+  const score = state.answers.filter((a) => a && a.correct).length;
   const total = state.questions.length;
 
   $("#result-greeting").textContent = `Well done, ${state.name}!`;
@@ -362,18 +390,21 @@ function showResults() {
 
   const review = $("#review");
   review.innerHTML = "";
-  state.answers.forEach((a, i) => {
+  state.questions.forEach((q, i) => {
+    const a = state.answers[i];
+    const isCorrect = a && a.correct;
     const item = document.createElement("div");
-    item.className = "review-item " + (a.correct ? "ok" : "no");
+    item.className = "review-item " + (isCorrect ? "ok" : "no");
+    const yourAnswer = a ? a.chosen : "Not answered";
     item.innerHTML = `
       <div class="review-head">
         <span class="review-num">${i + 1}</span>
-        <span class="review-word">${a.question.promptText}</span>
-        <span class="review-mark">${a.correct ? "✓" : "✗"}</span>
+        <span class="review-word">${q.promptText}</span>
+        <span class="review-mark">${isCorrect ? "✓" : "✗"}</span>
       </div>
       <div class="review-detail">
-        <div>Correct: <strong>${a.question.answerText}</strong></div>
-        ${a.correct ? "" : `<div>Your answer: <span class="your-answer">${a.chosen}</span></div>`}
+        <div>Correct: <strong>${q.answerText}</strong></div>
+        ${isCorrect ? "" : `<div>Your answer: <span class="your-answer">${yourAnswer}</span></div>`}
       </div>
     `;
     review.appendChild(item);

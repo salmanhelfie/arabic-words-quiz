@@ -225,8 +225,9 @@ p { color: var(--muted); line-height: 1.5; }
 .question-prompt.english { font-size: 1.6rem; }
 
 .options { display: flex; flex-direction: column; gap: 12px; }
-.next-row { display: flex; justify-content: flex-end; }
-.next-row .btn { min-width: 130px; }
+.quiz-nav { display: flex; gap: 12px; align-items: center; }
+.quiz-nav #prev-question { min-width: 110px; }
+.quiz-nav #next-question { min-width: 130px; margin-left: auto; }
 .option {
   font-family: inherit;
   font-size: 1.05rem;
