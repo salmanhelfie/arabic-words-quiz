@@ -133,6 +133,7 @@ function meaningOf(word) {
 function showScreen(id) {
   $$(".screen").forEach((s) => s.classList.remove("active"));
   $("#" + id).classList.add("active");
+  document.body.classList.toggle("quiz-active", id === "quiz-screen");
 }
 
 // ----- Screen 1: name -----

@@ -66,6 +66,11 @@ body {
   color: #f1f5f9;
 }
 .brand-accent { color: #5eead4; }
+
+/* When the quiz is in progress, only the brand stays in the header */
+body.quiz-active .app-header h1,
+body.quiz-active .app-header .subtitle { display: none; }
+body.quiz-active .brand { margin-bottom: 0; }
 .app-header h1 {
   font-size: 2rem;
   font-weight: 700;
