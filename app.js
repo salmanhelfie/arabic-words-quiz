@@ -561,6 +561,18 @@ function initRestartButton() {
   $("#restart-btn").addEventListener("click", goToSetup);
 }
 
+function initBrand() {
+  const brand = $("#brand");
+  const goHome = () => showScreen("name-screen");
+  brand.addEventListener("click", goHome);
+  brand.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      goHome();
+    }
+  });
+}
+
 // ----- Init -----
 document.addEventListener("DOMContentLoaded", () => {
   initNameScreen();
@@ -568,6 +580,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initQuizScreen();
   initResultScreen();
   initRestartButton();
+  initBrand();
   applyI18n();
   showScreen("name-screen");
 });

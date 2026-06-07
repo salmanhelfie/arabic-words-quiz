@@ -45,7 +45,13 @@ body {
   align-items: center;
   gap: 10px;
   margin-bottom: 14px;
+  cursor: pointer;
+  border-radius: 12px;
+  padding: 4px 8px;
+  transition: opacity 0.15s;
 }
+.brand:hover { opacity: 0.85; }
+.brand:focus-visible { outline: 2px solid #5eead4; outline-offset: 2px; }
 .brand-mark {
   width: 40px;
   height: 40px;
