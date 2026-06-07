@@ -548,7 +548,10 @@ function initRestartButton() {
 
 function initBrand() {
   const brand = $("#brand");
-  const goHome = () => showScreen("name-screen");
+  // Hard refresh from the server (cache-busting) to start completely fresh.
+  const goHome = () => {
+    window.location.href = window.location.pathname + "?_=" + Date.now();
+  };
   brand.addEventListener("click", goHome);
   brand.addEventListener("keydown", (e) => {
     if (e.key === "Enter" || e.key === " ") {
