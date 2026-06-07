@@ -271,9 +271,19 @@ function renderQuestion() {
   $("#progress-bar-fill").style.width = `${(state.current / total) * 100}%`;
 
   const promptIsArabic = state.direction === "ar2mean";
-  $("#question-label").textContent = promptIsArabic
-    ? `What does this word mean (${LANGUAGE_NAMES[state.language]})?`
-    : `Which Arabic word means this (${LANGUAGE_NAMES[state.language]})?`;
+  const labels = {
+    english: {
+      ar2mean: "What does this word mean?",
+      mean2ar: "Which Arabic word means this?",
+    },
+    urdu: {
+      ar2mean: "اس لفظ کا مطلب کیا ہے؟",
+      mean2ar: "اس کا مطلب کون سا عربی لفظ ہے؟",
+    },
+  };
+  const labelEl = $("#question-label");
+  labelEl.textContent = labels[state.language][promptIsArabic ? "ar2mean" : "mean2ar"];
+  labelEl.className = "question-label" + (state.language === "urdu" ? " urdu" : "");
 
   const promptEl = $("#question-prompt");
   promptEl.textContent = q.promptText;
